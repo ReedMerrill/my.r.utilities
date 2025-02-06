@@ -56,7 +56,14 @@ str_concat_across <- function(dt, pattern) {
   return(dt)
 }
 
-# recode a target column dynamically using values from a range of related columns
+#' Recode a target column dynamically 
+#'
+#' This fuction recodes a target column dynamically using values from a range of related columns
+#' @param data A data.frame, tibble, etc.
+#' @param target_col The name of the column to be recoded.
+#' @param source_col_pattern A regex to match the source columns to be used in the recode.
+#' @param na_vals Values to be ignored.
+#' @return ??
 #' @export
 recode_from_embedded <- function(data,
                                  target_col,
