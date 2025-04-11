@@ -1,7 +1,6 @@
 # print the unique values of each variable
 #' @export
 variable_checker <- function(data, exclude_cols = c()) {
-
   col_i <- 1:ncol(data)
 
   cols <- data |> colnames()
@@ -19,7 +18,6 @@ variable_checker <- function(data, exclude_cols = c()) {
 # return a char vector of columns based on a pattern
 #' @export
 find_col_group <- function(dt, pattern) {
-
   cols_vec <- dt |>
     dplyr::select(tidyselect::matches(pattern)) |>
     colnames()
@@ -30,14 +28,13 @@ find_col_group <- function(dt, pattern) {
 # Coalesces data based on a pattern that duplicate columns start with
 #' @export
 coalesce_across <- function(dt, pattern) {
-
   cols_vec <- dt |>
     dplyr::select(tidyselect::starts_with(pattern)) |>
     colnames()
 
   dt <- dt |>
     dplyr::mutate(!!pattern := dplyr::coalesce(!!!rlang::syms(cols_vec))) # !!! unpacks a vector
-    # !! forces part of the expression to be evaluated first
+  # !! forces part of the expression to be evaluated first
 
   return(dt)
 }
@@ -45,18 +42,17 @@ coalesce_across <- function(dt, pattern) {
 # concatenate character vectors of related variables into a single vector
 #' @export
 str_concat_across <- function(dt, pattern) {
-
   cols_vec <- dt |>
     dplyr::select(tidyselect::starts_with(pattern)) |>
     colnames()
 
   dt <- dt |>
-    dplyr::mutate(!!pattern := paste(!!!rlang::syms(cols_vec), sep = ", ")) 
+    dplyr::mutate(!!pattern := paste(!!!rlang::syms(cols_vec), sep = ", "))
 
   return(dt)
 }
 
-#' Recode a target column dynamically 
+#' Recode a target column dynamically
 #'
 #' This fuction recodes a target column dynamically using values from a range of related columns
 #' @param data A data.frame, tibble, etc.
@@ -65,33 +61,30 @@ str_concat_across <- function(dt, pattern) {
 #' @param na_vals Values to be ignored.
 #' @return ??
 #' @export
-recode_from_embedded <- function(data,
-                                 target_col,
-                                 source_col_pattern,
-                                 na_vals = c("997", "998", "999")) {
-
+recode_from_embedded <- function(
+  data,
+  target_col,
+  source_col_pattern,
+  na_vals = c("997", "998", "999")
+) {
   data[["tmp_col"]] <- NA
 
   for (i in seq_len(nrow(data))) {
-
     if (!(data[[target_col]][i] %in% na_vals) & !is.na(data[[target_col]][i])) {
-
-      filter <- paste0(source_col_pattern, # the column name prefix
-                       data[[target_col]][i]) # the value of the target col (matches the suffix of the source col)
+      filter <- paste0(
+        source_col_pattern, # the column name prefix
+        data[[target_col]][i]
+      ) # the value of the target col (matches the suffix of the source col)
 
       data[["tmp_col"]][i] <- data[[filter]][i]
-
     } else {
-
       data[["tmp_col"]][i] <- data[[target_col]][i]
-
     }
   }
 
-  data <- data %>%
-    dplyr::select(-tidyselect::all_of(target_col)) %>%
+  data <- data |>
+    dplyr::select(-tidyselect::all_of(target_col)) |>
     dplyr::rename(!!target_col := "tmp_col")
 
   return(data)
-
 }
