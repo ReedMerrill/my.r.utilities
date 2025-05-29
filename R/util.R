@@ -62,7 +62,7 @@ str_concat_across <- function(dt, pattern) {
 #' @param source_col_pattern A regex to match the source columns to be used in
 #' the recode.
 #' @param na_vals Values to be ignored.
-#' @return None. This function is called for its side-effects only. The target
+#' @return None. This function is called for its side-effects only. The `target`
 #' column is recoded.
 #' @export
 recode_from_embedded <- function(
