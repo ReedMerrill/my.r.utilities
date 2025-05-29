@@ -12,6 +12,7 @@
 #' @param year A string value representing the year to be included in the IDs.
 #' @returns The input `data.frame` (passed to the `data` parameter) with a new
 #' column holding the new individual IDs called `ind_id`.
+#' @export
 create_ind_ids <- function(data, census_id_name, year) {
   # Split data by census_id groups
   grouped_data <- split(data, data[[census_id_name]])
