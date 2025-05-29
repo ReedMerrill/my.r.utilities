@@ -16,13 +16,16 @@ recode_from_embedded(
 
 \item{target_col}{The name of the column to be recoded.}
 
-\item{source_col_pattern}{A regex to match the source columns to be used in the recode.}
+\item{source_col_pattern}{A regex to match the source columns to be used in
+the recode.}
 
 \item{na_vals}{Values to be ignored.}
 }
 \value{
-??
+None. This function is called for its side-effects only. The target
+column is recoded.
 }
 \description{
-This fuction recodes a target column dynamically using values from a range of related columns
+This function recodes a target column dynamically using values from a range
+of related columns
 }
