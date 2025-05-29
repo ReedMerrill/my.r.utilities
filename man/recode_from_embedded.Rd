@@ -22,7 +22,7 @@ the recode.}
 \item{na_vals}{Values to be ignored.}
 }
 \value{
-None. This function is called for its side-effects only. The target
+None. This function is called for its side-effects only. The \code{target}
 column is recoded.
 }
 \description{
