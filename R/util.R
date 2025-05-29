@@ -1,4 +1,4 @@
-# print the unique values of each variable
+# print the unique values of each variable in a data set
 #' @export
 variable_checker <- function(data, exclude_cols = c()) {
   col_i <- 1:ncol(data)
@@ -32,9 +32,10 @@ coalesce_across <- function(dt, pattern) {
     dplyr::select(tidyselect::starts_with(pattern)) |>
     colnames()
 
-  dt <- dt |>
-    dplyr::mutate(!!pattern := dplyr::coalesce(!!!rlang::syms(cols_vec))) # !!! unpacks a vector
+  # !!! unpacks a vector
   # !! forces part of the expression to be evaluated first
+  dt <- dt |>
+    dplyr::mutate(!!pattern := dplyr::coalesce(!!!rlang::syms(cols_vec))) # nolint
 
   return(dt)
 }
@@ -47,19 +48,22 @@ str_concat_across <- function(dt, pattern) {
     colnames()
 
   dt <- dt |>
-    dplyr::mutate(!!pattern := paste(!!!rlang::syms(cols_vec), sep = ", "))
+    dplyr::mutate(!!pattern := paste(!!!rlang::syms(cols_vec), sep = ", ")) # nolint
 
   return(dt)
 }
 
 #' Recode a target column dynamically
 #'
-#' This fuction recodes a target column dynamically using values from a range of related columns
+#' This function recodes a target column dynamically using values from a range
+#' of related columns
 #' @param data A data.frame, tibble, etc.
 #' @param target_col The name of the column to be recoded.
-#' @param source_col_pattern A regex to match the source columns to be used in the recode.
+#' @param source_col_pattern A regex to match the source columns to be used in
+#' the recode.
 #' @param na_vals Values to be ignored.
-#' @return ??
+#' @return None. This function is called for its side-effects only. The target
+#' column is recoded.
 #' @export
 recode_from_embedded <- function(
   data,
@@ -70,7 +74,9 @@ recode_from_embedded <- function(
   data[["tmp_col"]] <- NA
 
   for (i in seq_len(nrow(data))) {
-    if (!(data[[target_col]][i] %in% na_vals) & !is.na(data[[target_col]][i])) {
+    if (
+      !(data[[target_col]][i] %in% na_vals) && !is.na(data[[target_col]][i])
+    ) {
       filter <- paste0(
         source_col_pattern, # the column name prefix
         data[[target_col]][i]
@@ -84,7 +90,7 @@ recode_from_embedded <- function(
 
   data <- data |>
     dplyr::select(-tidyselect::all_of(target_col)) |>
-    dplyr::rename(!!target_col := "tmp_col")
+    dplyr::rename(!!target_col := "tmp_col") # nolint
 
   return(data)
 }
