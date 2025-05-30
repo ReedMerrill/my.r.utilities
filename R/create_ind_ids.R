@@ -15,6 +15,11 @@
 #' column holding the new individual IDs called `ind_id`.
 #' @export
 create_ind_ids <- function(data, census_id_name, year) {
+  # Do NA conversions so something can be still be input to the ID if there is
+  # `census_id` in `census_id_name` for a given row
+  data[[census_id_name]] <- data[[census_id_name]] |> as.character()
+  data[[census_id_name]][is.na(data[[census_id_name]])] <- "NULL"
+
   # Split data by census_id groups
   grouped_data <- split(data, data[[census_id_name]])
   # Apply numbering within each group
