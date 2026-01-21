@@ -94,3 +94,19 @@ recode_from_embedded <- function(
 
   return(data)
 }
+
+#' Find the last non-NA column in a data frame
+#'
+#' @param df A data.frame, tibble, etc.
+#' @return Dataframe
+#' @export
+last_non_na_col <- function(df) {
+  apply(df, 1, function(x) {
+    idx <- which(!is.na(x))
+    if (length(idx) == 0) {
+      NA_character_
+    } else {
+      names(x)[idx[length(idx)]]
+    }
+  })
+}
