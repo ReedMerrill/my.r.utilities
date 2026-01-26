@@ -95,10 +95,10 @@ recode_from_embedded <- function(
   return(data)
 }
 
-#' Find the last non-NA column in a data frame
+#' Find the last non-NA column in each row of data frame
 #'
 #' @param df A data.frame, tibble, etc.
-#' @return Dataframe
+#' @return A vector of the names of the last non-NA column in each row.
 #' @export
 last_non_na_col <- function(df) {
   apply(df, 1, function(x) {
