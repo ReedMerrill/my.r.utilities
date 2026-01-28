@@ -6,10 +6,10 @@ c_breakout <- function(data, pattern, col) {
     # dummy coded columns.
     dplyr::mutate(
       dplyr::across(
-        dplyr::matches(pattern),
+        dplyr::matches(pattern, perl = TRUE),
         ~ dplyr::if_else(
           .x == 1,
-          stringr::str_extract(dplyr::cur_column(), "\\d+$"),
+          stringr::str_extract(dplyr::cur_column(), "[0-9]+$"),
           ""
         )
       )
