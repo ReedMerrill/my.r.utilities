@@ -7,10 +7,10 @@
 run <- FALSE
 stopifnot(run)
 
-source("../../R/c_breakout.R")
+source("../../../R/c_breakout.R")
 
 # --------------------
-# c_breakout: set up for API call
+# setup API call
 
 # This API key needs to come from within the Qualtrics account of each person
 # who runs this code.
@@ -41,54 +41,45 @@ df <- qualtRics::fetch_survey(
 colmap <- qualtRics::extract_colmap(df)
 
 # --------------------
-# c_breakout: race variable
+# fetch and output
 
-race_qid <- colmap |>
-  dplyr::filter(qname == "race") |>
-  dplyr::pull(ImportId)
+fetch <- function(col_name, survey_id) {
+  qid <- colmap |>
+    dplyr::filter(qname == col_name) |>
+    dplyr::pull(ImportId)
 
-race_input <- qualtRics::fetch_survey(
-  surveyID = survey_id,
-  include_display_order = FALSE,
-  include_questions = race_qid,
-  breakout_sets = TRUE,
-  convert = FALSE,
-  label = FALSE
-) |>
-  dplyr::select(tidyr::starts_with("race"))
+  input <- qualtRics::fetch_survey(
+    surveyID = survey_id,
+    include_display_order = FALSE,
+    include_questions = qid,
+    breakout_sets = TRUE,
+    convert = FALSE,
+    label = FALSE
+  ) |>
+    dplyr::select(tidyr::starts_with(col_name))
 
-saveRDS(race_input, file = "../testthat/data/c_breakout_input_race.rds")
+  expected <- input |> c_breakout(base_name = col_name, col = col_name)
 
-race_expected <- race_input |> c_breakout(pattern = "^race_\\d+$", col = "race")
+  list("expected" = expected, "input" = input)
+}
 
-saveRDS(race_expected, file = "../testthat/data/c_breakout_expected_race.rds")
+race <- fetch(col_name = "race", survey_id)
 
-# --------------------
-# c_breakout: dp_support variable
+saveRDS(race$input, file = "../../testthat/data/c_breakout_input_race.rds")
 
-dp_support_qid <- colmap |>
-  dplyr::filter(qname == "dp_support") |>
-  dplyr::pull(ImportId)
+saveRDS(
+  race$expected,
+  file = "../../testthat/data/c_breakout_expected_race.rds"
+)
 
-dp_support_raw <- qualtRics::fetch_survey(
-  surveyID = survey_id,
-  include_display_order = FALSE,
-  include_questions = dp_support_qid,
-  breakout_sets = TRUE,
-  convert = FALSE,
-  label = FALSE
+dp_support <- fetch(col_name = "dp_support", survey_id)
+
+saveRDS(
+  dp_support$input,
+  file = "../../testthat/data/c_breakout_input_dp_support.rds"
 )
 
 saveRDS(
-  dp_support_raw,
-  file = "../testthat/data/c_breakout_input_dp_support.rds"
-)
-
-dp_support_clean <- dp_support_raw |>
-  c_breakout(pattern = "^dp_support_\\d+$", col = "dp_support") |>
-  dplyr::select(dp_support)
-
-saveRDS(
-  dp_support_clean,
-  file = "../testthat/data/c_breakout_expected_dp_support.rds"
+  dp_support$expected,
+  file = "../../testthat/data/c_breakout_expected_dp_support.rds"
 )
