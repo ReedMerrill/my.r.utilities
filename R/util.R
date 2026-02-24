@@ -1,17 +1,16 @@
 # print the unique values of each variable in a data set
 #' @export
-variable_checker <- function(data, exclude_cols = c()) {
-  col_i <- 1:ncol(data)
-
+variable_checker <- function(data, exclude_large_unique) {
   cols <- data |> colnames()
 
-  col_names_tbl <- tibble::tibble(cols, col_i)
-
-  col_names_tbl <- col_names_tbl |> dplyr::filter(!(cols %in% exclude_cols))
-
-  for (i in 1:nrow(col_names_tbl)) {
-    print(paste("Column #:", col_names_tbl$cols[i]))
-    print(unique(data[[col_names_tbl$cols[i]]]))
+  for (i in seq_along(cols)) {
+    col <- cols[i]
+    if (length(unique(data[[col]])) < 40 && exclude_large_unique) {
+      print(paste("Column #:", col))
+      print("")
+      print(unique(data[[col]]))
+      print("-----------------------------")
+    }
   }
 }
 
