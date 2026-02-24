@@ -97,15 +97,27 @@ recode_from_embedded <- function(
 #' Find the last non-NA column in each row of data frame
 #'
 #' @param df A data.frame, tibble, etc.
-#' @return A vector of the names of the last non-NA column in each row.
+#' @param return_index Logical. If TRUE, returns the column index. If FALSE (default), returns the column name.
+#' @return A vector of names or indices of the last non-NA column in each row.
 #' @export
-last_non_na_col <- function(df) {
+last_non_na_col <- function(df, return_index = FALSE) {
   apply(df, 1, function(x) {
-    idx <- which(!is.na(x))
-    if (length(idx) == 0) {
-      NA_character_
+    # Find positions of non-NA values
+    valid_indices <- which(!is.na(x))
+
+    # Handle the case where the entire row is NA
+    if (length(valid_indices) == 0) {
+      return(if (return_index) NA_integer_ else NA_character_)
+    }
+
+    # Identify the last valid index
+    last_idx <- valid_indices[length(valid_indices)]
+
+    # Return based on the user's preference
+    if (return_index) {
+      return(last_idx)
     } else {
-      names(x)[idx[length(idx)]]
+      return(names(x)[last_idx])
     }
   })
 }
